@@ -1,7 +1,7 @@
 Vue.component('kanban', {
     template: `
         <div class='app'> 
-            <h1>KABAN TABLE</h1>
+            <h1>KANBAN TABLE</h1>
             <create-task-form @task-created="createTask"></create-task-form>
             <div class="columns">
                 <column title="Запланированные задачи" :tasks="plannedTasks" @task-moved="moveTask" @task-delete="deleteTask"></column>
