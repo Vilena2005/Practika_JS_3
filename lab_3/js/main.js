@@ -1,6 +1,6 @@
 Vue.component('kanban', {
     template: `
-        <div class='app'> 
+        <div class='app'>
             <h1>KANBAN TABLE</h1>
             <create-task-form @task-created="createTask"></create-task-form>
             <div class="columns">
@@ -72,12 +72,6 @@ Vue.component('create-task-form', {
             <h2>Создание задачи</h2>
             <input type="text" v-model="title" placeholder="Заголовок">
             <textarea v-model="description" placeholder="Описание"></textarea>
-            <h4>Подзадачи</h4>
-            <div v-for="(subtask, index) in subtasks" :key="index">
-                <input type="text" v-model="subtask.title" placeholder="Название подзадачи">
-                <button @click="removeSubtask(index)">Удалить</button>
-            </div>
-            <button @click="addSubtask">Добавить подзадачу</button>
             <label for="deadline">Дедлайн:</label>
             <input type="date" v-model="deadline">
             <h4 v-if="notUniqueTitle(title)">Задача с таким заголовком уже существует</h4>
@@ -89,17 +83,10 @@ Vue.component('create-task-form', {
         return {
             title: '',
             description: '',
-            deadline: '',
-            subtasks: []
+            deadline: ''
         }
     },
     methods: {
-        addSubtask() {
-            this.subtasks.push({ title: '', completed: false });
-        },
-        removeSubtask(index) {
-            this.subtasks.splice(index, 1);
-        },
         notUniqueTitle(title) {
             const allTasks = [
                 ...this.$parent.plannedTasks,
@@ -111,15 +98,12 @@ Vue.component('create-task-form', {
             return allTasks.some(task => task.title === title);
         },
         createTask() {
-            const filteredSubtasks = this.subtasks.filter(subtask => subtask.title.trim() !== '');
-            
             const newTask = {
                 title: this.title,
                 description: this.description,
                 deadline: this.deadline,
                 lastEdited: new Date(),
-                column: 'plannedTasks',
-                subtasks: filteredSubtasks
+                column: 'plannedTasks'
             };
 
             this.$emit('task-created', newTask);
@@ -127,7 +111,6 @@ Vue.component('create-task-form', {
             this.title = '';
             this.description = '';
             this.deadline = '';
-            this.subtasks = [];
         }
     }
 })
@@ -155,7 +138,6 @@ Vue.component('column', {
             this.$emit('task-delete', task);
         }
     }
-
 })
 
 Vue.component('task-card', {
@@ -175,21 +157,6 @@ Vue.component('task-card', {
                     <li v-for="reason in task.returnReasons" :key="reason">{{ reason }}</li>
                 </ul>
             </p>
-            <div v-if="task.subtasks && task.subtasks.length > 0">
-                <div v-if="task.column === 'completedTasks'">
-                    <p>Подзадачи</p>
-                    <ol>
-                        <li v-for="(subtask, index) in task.subtasks" :key="index">{{ subtask.title }}</li>
-                    </ol>
-                </div>
-                <div v-else>
-                    <p>Подзадачи</p>
-                    <div v-for="(subtask, index) in task.subtasks" :key="index">
-                        <input type="checkbox" v-model="subtask.completed">
-                        <span :class="{ completed: subtask.completed }">{{ subtask.title }}</span>
-                    </div>
-                </div>
-            </div>
             <p v-if="allowStatus">Статус : {{ checkDeadline() }}</p>
             <div class="buttons">
                 <button v-if="isReturning" @click="saveReturnReason">Сохранить причину возврата</button>
@@ -199,7 +166,6 @@ Vue.component('task-card', {
                 <button v-if="isEditing && !isReturning && !notUniqueTitle(newTitle)" @click="saveEdit">Сохранить изменения</button>
                 <button v-if="allowDel && !isEditing && !isReturning" @click="deleteTask">Удалить задачу</button>
                 <h4 v-if="notUniqueTitle(newTitle)">Задача с таким заголовком уже существует</h4>
-                <h4 v-if="!areAllSubtasksCompleted && task.column === 'testingTasks'">Чтобы переместить задачу дальше, сначала выполните все подзадачи</h4>
             </div>
         </div>
     `,
@@ -305,16 +271,8 @@ Vue.component('task-card', {
         allowStatus(){
             return this.task.column === 'completedTasks';
         },
-        areAllSubtasksCompleted() {
-            return this.task.subtasks.every(subtask => subtask.completed);
-        },
         canMoveToNextColumn() {
-            if(this.task.column === 'testingTasks'){
-                return this.allowMove && this.areAllSubtasksCompleted;
-            } else {
-                return this.allowMove;
-            }
-            
+            return this.allowMove;
         }
     }
 })
