@@ -1,0 +1,40 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+.task-form{
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    background-color: #EBCFB2;
+    border-radius: 2%;
+    padding: 0.5em;
+    margin-top: 1em;
+    width: 20em;
+}
+.app{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.task-form > h2{
+    text-align: center;
+}
+.task-form > textarea{
+    height: 5em;
+}
+task-form > p{
+    margin: 0;
+}
+.task-form > h4{
+    text-align: center;
+}
+.task-card{
+    background-color: #C5BAAF;
+    border-radius: 2%;
+    padding: 0.5em;
+    gap: 0.5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
