@@ -65,3 +65,75 @@ Vue.component('kanban', {
         this.loadTasks();
     }
 })
+
+Vue.component('create-task-form', {
+    template: `
+        <div class="task-form">
+            <h2>Создание задачи</h2>
+            <input type="text" v-model="title" placeholder="Заголовок">
+            <textarea v-model="description" placeholder="Описание"></textarea>
+            <h4>Подзадачи</h4>
+            <div v-for="(subtask, index) in subtasks" :key="index">
+                <input type="text" v-model="subtask.title" placeholder="Название подзадачи">
+                <button @click="removeSubtask(index)">Удалить</button>
+            </div>
+            <button @click="addSubtask">Добавить подзадачу</button>
+            <label for="deadline">Дедлайн:</label>
+            <input type="date" v-model="deadline">
+            <h4 v-if="notUniqueTitle(title)">Задача с таким заголовком уже существует</h4>
+            <h4 v-if="title == '' || description == '' || deadline ==''">Для создания задачи заполните все поля</h4>
+            <button @click="createTask" v-if="title !== '' && description !== '' && deadline !=='' && !notUniqueTitle(title)">Создать</button>
+        </div>
+   `,
+    data() {
+        return {
+            title: '',
+            description: '',
+            deadline: '',
+            subtasks: []
+        }
+    },
+    methods: {
+        addSubtask() {
+            this.subtasks.push({ title: '', completed: false });
+        },
+        removeSubtask(index) {
+            this.subtasks.splice(index, 1);
+        },
+        notUniqueTitle(title) {
+            const allTasks = [
+                ...this.$parent.plannedTasks,
+                ...this.$parent.inProgressTasks,
+                ...this.$parent.testingTasks,
+                ...this.$parent.completedTasks
+            ];
+
+            return allTasks.some(task => task.title === title);
+        },
+        createTask() {
+            const filteredSubtasks = this.subtasks.filter(subtask => subtask.title.trim() !== '');
+            
+            const newTask = {
+                title: this.title,
+                description: this.description,
+                deadline: this.deadline,
+                lastEdited: new Date(),
+                column: 'plannedTasks',
+                subtasks: filteredSubtasks
+            };
+
+            this.$emit('task-created', newTask);
+
+            this.title = '';
+            this.description = '';
+            this.deadline = '';
+            this.subtasks = [];
+        }
+    }
+})
+
+
+
+let app = new Vue({
+    el: '#app'
+})
