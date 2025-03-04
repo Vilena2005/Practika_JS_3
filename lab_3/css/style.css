@@ -38,3 +38,42 @@ task-form > p{
     flex-direction: column;
     justify-content: space-around;
 }
+.task-card > p > ul{
+    margin-left: 1.5em;
+}
+ol> li{
+    margin-left: 1.5em;
+}
+.task-card > h3{
+    margin: 0;
+}
+.task-card > p{
+    margin: 0;
+}
+.columns{
+    display: flex;
+    justify-content: space-between;
+    width: 95rem;
+    margin-top: 3em;
+}
+.columns > div{
+    width: 20em;
+}
+.tasks{
+    margin-top: 1em;
+    gap: 1em;
+    display: flex;
+    flex-direction: column;
+}
+.buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+    flex-wrap: wrap;
+}
+button{
+    padding: 0.2em;
+}
+.completed {
+    text-decoration: line-through;
+}

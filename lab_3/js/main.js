@@ -132,7 +132,31 @@ Vue.component('create-task-form', {
     }
 })
 
+Vue.component('column', {
+    props: ['tasks', 'title'],
+    template: `
+        <div>
+            <div class="column">
+                <h2>{{ title }}</h2>
+                <div class="tasks">
+                    <task-card v-for="task in tasks" :key="task.id" :task="task" @move="moveTask" @return="returnTask" @delete="deleteTask"></task-card>
+                </div>
+            </div>
+        </div>
+    `,
+    methods: {
+        moveTask(newColumn) {
+            this.$emit('task-moved', {task: newColumn.task, targetColumn: newColumn.targetColumn})
+        },
+        returnTask(newColumn) {
+            this.$emit('task-returned', {task: newColumn.task, targetColumn: newColumn.targetColumn, returnReason: newColumn.returnReason});
+        },
+        deleteTask(task){
+            this.$emit('task-delete', task);
+        }
+    }
 
+})
 
 let app = new Vue({
     el: '#app'
